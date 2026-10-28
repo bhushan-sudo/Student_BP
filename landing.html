@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,20 +21,32 @@
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
     .gradient-text {
       background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
     .hero-bg {
-      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.15) 0%, transparent 70%);
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
     }
-    .feature-card:hover { transform: translateY(-4px); }
-    .feature-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .feature-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
   </style>
 </head>
+
 <body class="bg-white text-slate-800 antialiased">
 
   <!-- ======== NAVBAR ======== -->
@@ -41,7 +54,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <!-- Logo -->
       <a href="#home" class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md">
+        <div
+          class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md">
           <i data-lucide="wallet-cards" class="w-5 h-5"></i>
         </div>
         <span class="font-extrabold text-xl text-slate-900">Campus<span class="text-indigo-600">Spend</span></span>
@@ -57,14 +71,17 @@
 
       <!-- Auth Buttons -->
       <div id="navAuthContainer" class="flex items-center gap-2.5">
-        <a href="dashboard.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-indigo-600 transition">
+        <a href="dashboard.html"
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-indigo-600 transition">
           <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
           <span>Demo Dashboard</span>
         </a>
-        <button onclick="openAuthModal('login')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition border border-indigo-200">
+        <button onclick="openAuthModal('login')"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition border border-indigo-200">
           Sign In
         </button>
-        <button onclick="openAuthModal('register')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm shadow-indigo-600/30">
+        <button onclick="openAuthModal('register')"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm shadow-indigo-600/30">
           Get Started Free
         </button>
       </div>
@@ -76,7 +93,8 @@
     <div class="max-w-5xl mx-auto text-center space-y-6">
 
       <!-- Badge -->
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-xs font-bold text-indigo-700">
+      <div
+        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-xs font-bold text-indigo-700">
         <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
         Free for College & University Students
       </div>
@@ -89,16 +107,19 @@
 
       <!-- Subheadline -->
       <p class="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-        Track pocket money, scholarships, and every chai & metro trip. Paste your <strong class="text-slate-700">GPay / PhonePe / Paytm SMS</strong> and we auto-categorize everything for you.
+        Track pocket money, scholarships, and every chai & metro trip. Paste your <strong class="text-slate-700">GPay /
+          PhonePe / Paytm SMS</strong> and we auto-categorize everything for you.
       </p>
 
       <!-- CTA Buttons -->
       <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-        <button onclick="openAuthModal('register')" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-indigo-600 text-white font-bold text-base hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/30">
+        <button onclick="openAuthModal('register')"
+          class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-indigo-600 text-white font-bold text-base hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/30">
           <i data-lucide="rocket" class="w-5 h-5"></i>
           Start Tracking Free
         </button>
-        <a href="#how-it-works" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-white text-slate-700 font-bold text-base hover:bg-slate-50 transition border border-slate-200 shadow-sm">
+        <a href="#how-it-works"
+          class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-white text-slate-700 font-bold text-base hover:bg-slate-50 transition border border-slate-200 shadow-sm">
           <i data-lucide="play-circle" class="w-5 h-5 text-indigo-500"></i>
           See How It Works
         </a>
@@ -106,10 +127,14 @@
 
       <!-- Trust Bar -->
       <div class="flex flex-wrap justify-center gap-6 pt-6 text-xs font-semibold text-slate-400">
-        <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> 100% Private & Secure</span>
-        <span class="flex items-center gap-1.5"><i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Works with GPay, PhonePe, Paytm</span>
-        <span class="flex items-center gap-1.5"><i data-lucide="cloud" class="w-4 h-4 text-indigo-500"></i> Synced Across Devices</span>
-        <span class="flex items-center gap-1.5"><i data-lucide="indian-rupee" class="w-4 h-4 text-rose-500"></i> Made for Indian Students</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> 100%
+          Private & Secure</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Works with
+          GPay, PhonePe, Paytm</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="cloud" class="w-4 h-4 text-indigo-500"></i> Synced
+          Across Devices</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="indian-rupee" class="w-4 h-4 text-rose-500"></i> Made
+          for Indian Students</span>
       </div>
 
       <!-- Dashboard Preview Card -->
@@ -143,7 +168,8 @@
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-14">
         <span class="text-xs font-bold uppercase tracking-widest text-indigo-600">What We Offer</span>
-        <h2 class="mt-2 text-4xl font-extrabold text-slate-900">Everything a student needs<br/>to manage money smarter</h2>
+        <h2 class="mt-2 text-4xl font-extrabold text-slate-900">Everything a student needs<br />to manage money smarter
+        </h2>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -153,7 +179,8 @@
             <i data-lucide="receipt-text" class="w-5 h-5 text-orange-500"></i>
           </div>
           <h3 class="font-bold text-base text-slate-900 mb-1.5">Expense Tracking</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">Categorize every expense — canteen, metro, textbooks, hostel rent, entertainment — in seconds. Just paste your UPI SMS.</p>
+          <p class="text-sm text-slate-500 leading-relaxed">Categorize every expense — canteen, metro, textbooks, hostel
+            rent, entertainment — in seconds. Just paste your UPI SMS.</p>
         </div>
 
         <!-- Feature 2 -->
@@ -162,7 +189,8 @@
             <i data-lucide="sliders-horizontal" class="w-5 h-5 text-indigo-500"></i>
           </div>
           <h3 class="font-bold text-base text-slate-900 mb-1.5">Budget Management</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">Set daily limits (e.g., ₹350/day) and monthly caps. Color-coded progress bars show your safe zone at a glance.</p>
+          <p class="text-sm text-slate-500 leading-relaxed">Set daily limits (e.g., ₹350/day) and monthly caps.
+            Color-coded progress bars show your safe zone at a glance.</p>
         </div>
 
         <!-- Feature 3 -->
@@ -171,7 +199,8 @@
             <i data-lucide="target" class="w-5 h-5 text-emerald-500"></i>
           </div>
           <h3 class="font-bold text-base text-slate-900 mb-1.5">Savings Goals</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">Dream of a MacBook, a Goa trip, or a coding bootcamp? Create a goal, set a deadline, and deposit savings with one tap.</p>
+          <p class="text-sm text-slate-500 leading-relaxed">Dream of a MacBook, a Goa trip, or a coding bootcamp? Create
+            a goal, set a deadline, and deposit savings with one tap.</p>
         </div>
 
         <!-- Feature 4 -->
@@ -180,7 +209,8 @@
             <i data-lucide="bell-ring" class="w-5 h-5 text-rose-500"></i>
           </div>
           <h3 class="font-bold text-base text-slate-900 mb-1.5">Smart Alerts</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">Get visual warnings at 80%, 90%, and 100% of your daily and monthly budget — before you overspend.</p>
+          <p class="text-sm text-slate-500 leading-relaxed">Get visual warnings at 80%, 90%, and 100% of your daily and
+            monthly budget — before you overspend.</p>
         </div>
 
         <!-- Feature 5 -->
@@ -189,7 +219,8 @@
             <i data-lucide="pie-chart" class="w-5 h-5 text-violet-500"></i>
           </div>
           <h3 class="font-bold text-base text-slate-900 mb-1.5">Expense Analytics</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">Interactive charts reveal where your money actually goes — food, travel, subscriptions, or books. Stop guessing.</p>
+          <p class="text-sm text-slate-500 leading-relaxed">Interactive charts reveal where your money actually goes —
+            food, travel, subscriptions, or books. Stop guessing.</p>
         </div>
 
         <!-- Feature 6 -->
@@ -198,7 +229,8 @@
             <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
           </div>
           <h3 class="font-bold text-base text-slate-900 mb-1.5">Budget Forecasting</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">Based on your burn rate, we predict exactly how much you'll have at month-end — so you never get caught short.</p>
+          <p class="text-sm text-slate-500 leading-relaxed">Based on your burn rate, we predict exactly how much you'll
+            have at month-end — so you never get caught short.</p>
         </div>
       </div>
     </div>
@@ -209,23 +241,32 @@
     <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
       <div class="space-y-5">
         <span class="text-xs font-bold uppercase tracking-widest text-indigo-300">UPI Statement Reader</span>
-        <h2 class="text-4xl font-extrabold leading-tight">Paste your bank SMS.<br/>We do the rest.</h2>
-        <p class="text-indigo-200 leading-relaxed">Copy any UPI transaction SMS from Google Pay, PhonePe, Paytm, SBI, HDFC, ICICI, or any Indian bank — and our AI engine automatically detects the amount, merchant, category, and payment app.</p>
+        <h2 class="text-4xl font-extrabold leading-tight">Paste your bank SMS.<br />We do the rest.</h2>
+        <p class="text-indigo-200 leading-relaxed">Copy any UPI transaction SMS from Google Pay, PhonePe, Paytm, SBI,
+          HDFC, ICICI, or any Indian bank — and our AI engine automatically detects the amount, merchant, category, and
+          payment app.</p>
         <ul class="space-y-2 text-sm text-indigo-100">
-          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Swiggy, Zomato → Food & Canteen</li>
-          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Metro, Rapido, Uber → Travel</li>
-          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Udemy, Hostel, Xerox → Education / Hostel</li>
-          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Scholarship credit → Income</li>
+          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+            Swiggy, Zomato → Food & Canteen</li>
+          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Metro,
+            Rapido, Uber → Travel</li>
+          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Udemy,
+            Hostel, Xerox → Education / Hostel</li>
+          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+            Scholarship credit → Income</li>
         </ul>
-        <button onclick="openAuthModal('register')" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-indigo-700 font-bold text-sm hover:bg-indigo-50 transition shadow-lg">
+        <button onclick="openAuthModal('register')"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-indigo-700 font-bold text-sm hover:bg-indigo-50 transition shadow-lg">
           <i data-lucide="smartphone" class="w-4 h-4"></i>
           Try UPI Import Now
         </button>
       </div>
 
       <!-- SMS Demo Card -->
-      <div class="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-5 space-y-3 font-mono text-xs text-indigo-100">
-        <p class="text-white font-bold text-sm flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4 text-indigo-300"></i> Paste SMS Example</p>
+      <div
+        class="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-5 space-y-3 font-mono text-xs text-indigo-100">
+        <p class="text-white font-bold text-sm flex items-center gap-2"><i data-lucide="message-square"
+            class="w-4 h-4 text-indigo-300"></i> Paste SMS Example</p>
         <div class="bg-black/30 rounded-xl p-3 leading-relaxed text-emerald-300">
           "Paid Rs. 140 to Zomato via Google Pay on 28-Oct ref 48291"
         </div>
@@ -233,10 +274,14 @@
           <i data-lucide="zap" class="w-3.5 h-3.5"></i> Auto-detected →
         </div>
         <div class="grid grid-cols-2 gap-2 text-[11px]">
-          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">Amount:</span><br /><span class="text-white font-bold">₹140</span></div>
-          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">App:</span><br /><span class="text-white font-bold">Google Pay</span></div>
-          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">Merchant:</span><br /><span class="text-white font-bold">Zomato</span></div>
-          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">Category:</span><br /><span class="text-orange-300 font-bold">Food & Canteen</span></div>
+          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">Amount:</span><br /><span
+              class="text-white font-bold">₹140</span></div>
+          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">App:</span><br /><span
+              class="text-white font-bold">Google Pay</span></div>
+          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">Merchant:</span><br /><span
+              class="text-white font-bold">Zomato</span></div>
+          <div class="bg-white/10 rounded-lg p-2"><span class="text-slate-400">Category:</span><br /><span
+              class="text-orange-300 font-bold">Food & Canteen</span></div>
         </div>
       </div>
     </div>
@@ -250,19 +295,28 @@
 
       <div class="grid md:grid-cols-3 gap-8">
         <div class="flex flex-col items-center text-center space-y-3">
-          <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-indigo-600/30">1</div>
+          <div
+            class="w-14 h-14 rounded-2xl bg-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-indigo-600/30">
+            1</div>
           <h3 class="font-bold text-lg text-slate-900">Create Free Account</h3>
-          <p class="text-sm text-slate-500">Sign up in 30 seconds with your college email. No credit card. No ads. No nonsense.</p>
+          <p class="text-sm text-slate-500">Sign up in 30 seconds with your college email. No credit card. No ads. No
+            nonsense.</p>
         </div>
         <div class="flex flex-col items-center text-center space-y-3">
-          <div class="w-14 h-14 rounded-2xl bg-violet-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-violet-600/30">2</div>
+          <div
+            class="w-14 h-14 rounded-2xl bg-violet-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-violet-600/30">
+            2</div>
           <h3 class="font-bold text-lg text-slate-900">Import UPI History</h3>
-          <p class="text-sm text-slate-500">Paste your GPay or PhonePe SMS messages. Our engine auto-logs amounts, merchants, and categories.</p>
+          <p class="text-sm text-slate-500">Paste your GPay or PhonePe SMS messages. Our engine auto-logs amounts,
+            merchants, and categories.</p>
         </div>
         <div class="flex flex-col items-center text-center space-y-3">
-          <div class="w-14 h-14 rounded-2xl bg-cyan-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-cyan-600/30">3</div>
+          <div
+            class="w-14 h-14 rounded-2xl bg-cyan-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-cyan-600/30">
+            3</div>
           <h3 class="font-bold text-lg text-slate-900">See & Save More</h3>
-          <p class="text-sm text-slate-500">View charts, get smart alerts, set savings goals, and watch your money situation improve week over week.</p>
+          <p class="text-sm text-slate-500">View charts, get smart alerts, set savings goals, and watch your money
+            situation improve week over week.</p>
         </div>
       </div>
     </div>
@@ -274,8 +328,12 @@
       <div class="space-y-5">
         <span class="text-xs font-bold uppercase tracking-widest text-indigo-600">Our Story</span>
         <h2 class="text-4xl font-extrabold text-slate-900 leading-snug">Built by students, for students.</h2>
-        <p class="text-slate-500 leading-relaxed">CampusSpend was born out of a simple frustration: pocket money disappears, scholarships vanish on random expenses, and by end of the month there's nothing left for the things that matter.</p>
-        <p class="text-slate-500 leading-relaxed">We built a tool that understands <strong class="text-slate-800">Indian student life</strong> — chai tapri runs, metro commutes, hostel mess bills, and semester textbook expenses. Everything tracked automatically from your UPI apps.</p>
+        <p class="text-slate-500 leading-relaxed">CampusSpend was born out of a simple frustration: pocket money
+          disappears, scholarships vanish on random expenses, and by end of the month there's nothing left for the
+          things that matter.</p>
+        <p class="text-slate-500 leading-relaxed">We built a tool that understands <strong class="text-slate-800">Indian
+            student life</strong> — chai tapri runs, metro commutes, hostel mess bills, and semester textbook expenses.
+          Everything tracked automatically from your UPI apps.</p>
         <div class="grid grid-cols-3 gap-4 pt-2">
           <div class="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
             <p class="text-2xl font-extrabold text-indigo-600">₹0</p>
@@ -296,7 +354,8 @@
         <div class="p-5 rounded-2xl bg-indigo-600 text-white space-y-2">
           <i data-lucide="graduation-cap" class="w-7 h-7 text-indigo-200"></i>
           <p class="font-bold">College-first Design</p>
-          <p class="text-xs text-indigo-200">Built for engineering, medical, arts, and management students across India.</p>
+          <p class="text-xs text-indigo-200">Built for engineering, medical, arts, and management students across India.
+          </p>
         </div>
         <div class="p-5 rounded-2xl bg-emerald-600 text-white space-y-2">
           <i data-lucide="shield-check" class="w-7 h-7 text-emerald-200"></i>
@@ -322,28 +381,35 @@
     <div class="max-w-2xl mx-auto text-center space-y-6">
       <span class="text-xs font-bold uppercase tracking-widest text-indigo-600">Contact Us</span>
       <h2 class="text-4xl font-extrabold text-slate-900">Have questions? We'd love to help.</h2>
-      <p class="text-slate-500">Reach out with feedback, bug reports, or feature requests. We're students too and we respond quickly.</p>
+      <p class="text-slate-500">Reach out with feedback, bug reports, or feature requests. We're students too and we
+        respond quickly.</p>
 
-      <form onsubmit="handleContactSubmit(event)" class="text-left space-y-3 bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
+      <form onsubmit="handleContactSubmit(event)"
+        class="text-left space-y-3 bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-xs font-semibold text-slate-600 mb-1 block">Your Name</label>
-            <input type="text" id="contactName" required placeholder="Rahul Sharma" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+            <input type="text" id="contactName" required placeholder="Rahul Sharma"
+              class="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
           </div>
           <div>
             <label class="text-xs font-semibold text-slate-600 mb-1 block">Email Address</label>
-            <input type="email" id="contactEmail" required placeholder="rahul@college.edu" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+            <input type="email" id="contactEmail" required placeholder="rahul@college.edu"
+              class="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
           </div>
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-600 mb-1 block">Message</label>
-          <textarea id="contactMsg" required rows="4" placeholder="I have a suggestion about..." class="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none"></textarea>
+          <textarea id="contactMsg" required rows="4" placeholder="I have a suggestion about..."
+            class="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none"></textarea>
         </div>
-        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-600/30 flex items-center justify-center gap-2">
+        <button type="submit"
+          class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-600/30 flex items-center justify-center gap-2">
           <i data-lucide="send" class="w-4 h-4"></i>
           <span id="contactBtnText">Send Message</span>
         </button>
-        <div id="contactSuccess" class="hidden text-center text-sm font-semibold text-emerald-600 bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+        <div id="contactSuccess"
+          class="hidden text-center text-sm font-semibold text-emerald-600 bg-emerald-50 p-3 rounded-xl border border-emerald-200">
           ✅ Message received! We'll reply within 24 hours.
         </div>
       </form>
@@ -361,7 +427,8 @@
             </div>
             <span class="font-extrabold text-white text-lg">Campus<span class="text-indigo-400">Spend</span></span>
           </div>
-          <p class="text-xs leading-relaxed">Smart budget management designed for Indian college and university students.</p>
+          <p class="text-xs leading-relaxed">Smart budget management designed for Indian college and university
+            students.</p>
         </div>
 
         <div>
@@ -385,7 +452,8 @@
 
         <div>
           <h4 class="font-bold text-white text-sm mb-3">Get Started</h4>
-          <button onclick="openAuthModal('register')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">
+          <button onclick="openAuthModal('register')"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">
             <i data-lucide="rocket" class="w-3.5 h-3.5"></i> Create Free Account
           </button>
         </div>
@@ -399,7 +467,8 @@
   </footer>
 
   <!-- ======== AUTH MODAL ======== -->
-  <div id="authModal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="authModal"
+    class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-7 shadow-2xl border border-slate-100 space-y-4">
       <!-- Header -->
       <div class="flex justify-between items-center">
@@ -416,8 +485,10 @@
 
       <!-- Tab Switcher -->
       <div class="flex rounded-xl bg-slate-100 p-1 text-xs font-bold">
-        <button id="tabLogin" onclick="switchTab('login')" class="flex-1 py-2 rounded-lg bg-white text-indigo-600 shadow-sm transition">Sign In</button>
-        <button id="tabRegister" onclick="switchTab('register')" class="flex-1 py-2 rounded-lg text-slate-500 hover:text-slate-800 transition">Create Account</button>
+        <button id="tabLogin" onclick="switchTab('login')"
+          class="flex-1 py-2 rounded-lg bg-white text-indigo-600 shadow-sm transition">Sign In</button>
+        <button id="tabRegister" onclick="switchTab('register')"
+          class="flex-1 py-2 rounded-lg text-slate-500 hover:text-slate-800 transition">Create Account</button>
       </div>
 
       <!-- Alert Banner -->
@@ -427,40 +498,51 @@
       <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
         <div>
           <label class="text-xs font-semibold text-slate-600 mb-1 block">Email Address</label>
-          <input type="email" id="loginEmail" required placeholder="student@college.edu" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          <input type="email" id="loginEmail" required placeholder="student@college.edu"
+            class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-600 mb-1 block">Password</label>
-          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          <input type="password" id="loginPassword" required placeholder="••••••••"
+            class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
         </div>
-        <button type="submit" id="loginBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-600/30">
+        <button type="submit" id="loginBtn"
+          class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-600/30">
           Sign In to Dashboard
         </button>
-        <p class="text-center text-xs text-slate-400">Don't have an account? <button type="button" onclick="switchTab('register')" class="text-indigo-600 font-semibold hover:underline">Create one free</button></p>
+        <p class="text-center text-xs text-slate-400">Don't have an account? <button type="button"
+            onclick="switchTab('register')" class="text-indigo-600 font-semibold hover:underline">Create one
+            free</button></p>
       </form>
 
       <!-- Register Form -->
       <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
         <div>
           <label class="text-xs font-semibold text-slate-600 mb-1 block">Full Name</label>
-          <input type="text" id="regName" required placeholder="e.g. Priya Sharma" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          <input type="text" id="regName" required placeholder="e.g. Priya Sharma"
+            class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-600 mb-1 block">College / University</label>
-          <input type="text" id="regCollege" placeholder="e.g. IIT Delhi, BITS, DU" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          <input type="text" id="regCollege" placeholder="e.g. IIT Delhi, BITS, DU"
+            class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-600 mb-1 block">Email Address</label>
-          <input type="email" id="regEmail" required placeholder="student@college.edu" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          <input type="email" id="regEmail" required placeholder="student@college.edu"
+            class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-600 mb-1 block">Password (min 6 chars)</label>
-          <input type="password" id="regPassword" required minlength="6" placeholder="••••••••" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          <input type="password" id="regPassword" required minlength="6" placeholder="••••••••"
+            class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
         </div>
-        <button type="submit" id="registerBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-sm shadow-emerald-600/30">
+        <button type="submit" id="registerBtn"
+          class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-sm shadow-emerald-600/30">
           Create Account & Go to Dashboard
         </button>
-        <p class="text-center text-xs text-slate-400">Already have an account? <button type="button" onclick="switchTab('login')" class="text-indigo-600 font-semibold hover:underline">Sign in</button></p>
+        <p class="text-center text-xs text-slate-400">Already have an account? <button type="button"
+            onclick="switchTab('login')" class="text-indigo-600 font-semibold hover:underline">Sign in</button></p>
       </form>
     </div>
   </div>
@@ -489,7 +571,7 @@
             `;
             lucide.createIcons();
           }
-        } catch(e) {}
+        } catch (e) { }
       }
     });
 
@@ -612,10 +694,10 @@
     }
 
     // Close modal on backdrop click
-    document.getElementById('authModal').addEventListener('click', function(e) {
+    document.getElementById('authModal').addEventListener('click', function (e) {
       if (e.target === this) closeAuthModal();
     });
   </script>
 </body>
-</html>
 
+</html>

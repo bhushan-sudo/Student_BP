@@ -66,11 +66,17 @@
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3">
+
                 <!-- Landing Page Link -->
                 <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs sm:text-sm font-semibold transition border border-slate-200 dark:border-slate-700">
                     <i data-lucide="home" class="w-4 h-4"></i>
                     <span class="hidden sm:inline">Landing Page</span>
                 </a>
+                <!-- Upload Statement CSV Button -->
+                <button onclick="openModal('csvUploadModal')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-xs sm:text-sm font-semibold transition border border-emerald-200/60 dark:border-emerald-800/60">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                    <span>Upload Statement (CSV)</span>
+                </button>
                 <!-- Quick Action: Import UPI -->
                 <button onclick="openModal('upiModal')"
                     class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-xs sm:text-sm font-semibold transition border border-indigo-200/60 dark:border-indigo-800/60">
@@ -78,16 +84,22 @@
                     <span>Import UPI SMS</span>
                 </button>
                 <!-- Auth Button / Profile Badge -->
-                <button id="authNavBtn" onclick="openAuthModal('login')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs sm:text-sm font-semibold transition shadow-sm shadow-indigo-600/30">
+                <button id="authNavBtn" onclick="openAuthModal('login')"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs sm:text-sm font-semibold transition shadow-sm shadow-indigo-600/30">
                     <i data-lucide="user" class="w-4 h-4"></i>
                     <span>Login / Register</span>
                 </button>
                 <div id="authProfilePill" class="hidden flex items-center gap-2">
-                    <div class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800">
-                        <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white font-bold flex items-center justify-center text-xs" id="userInitial">S</span>
-                        <span class="text-xs font-semibold text-slate-800 dark:text-slate-200" id="userGreeting">Student</span>
+                    <div
+                        class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800">
+                        <span
+                            class="w-6 h-6 rounded-lg bg-indigo-600 text-white font-bold flex items-center justify-center text-xs"
+                            id="userInitial">S</span>
+                        <span class="text-xs font-semibold text-slate-800 dark:text-slate-200"
+                            id="userGreeting">Student</span>
                     </div>
-                    <button onclick="handleLogout()" title="Log Out" class="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
+                    <button onclick="handleLogout()" title="Log Out"
+                        class="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -598,8 +610,10 @@ Received Rs 5000 from Parents (Pocket money)..."
     </div>
 
     <!-- Modal 5: Authentication (Login & Register) -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+    <div id="authModal"
+        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
@@ -607,17 +621,20 @@ Received Rs 5000 from Parents (Pocket money)..."
                     </div>
                     <h3 class="text-base font-bold text-slate-900 dark:text-white">Student Account</h3>
                 </div>
-                <button onclick="closeModal('authModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <button onclick="closeModal('authModal')"
+                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Tab Switcher -->
             <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-xs font-semibold">
-                <button id="authTabLogin" onclick="switchAuthTab('login')" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm transition">
+                <button id="authTabLogin" onclick="switchAuthTab('login')"
+                    class="flex-1 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm transition">
                     Sign In
                 </button>
-                <button id="authTabRegister" onclick="switchAuthTab('register')" class="flex-1 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition">
+                <button id="authTabRegister" onclick="switchAuthTab('register')"
+                    class="flex-1 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition">
                     Create Account
                 </button>
             </div>
@@ -629,13 +646,16 @@ Received Rs 5000 from Parents (Pocket money)..."
             <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Email Address</label>
-                    <input type="email" id="loginEmail" required placeholder="student@college.edu" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                    <input type="email" id="loginEmail" required placeholder="student@college.edu"
+                        class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
                 </div>
                 <div>
                     <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Password</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                    <input type="password" id="loginPassword" required placeholder="••••••••"
+                        class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
                 </div>
-                <button type="submit" id="loginBtnSubmit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-600/30 flex items-center justify-center gap-2">
+                <button type="submit" id="loginBtnSubmit"
+                    class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-600/30 flex items-center justify-center gap-2">
                     <span>Sign In</span>
                 </button>
             </form>
@@ -644,24 +664,77 @@ Received Rs 5000 from Parents (Pocket money)..."
             <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3 text-xs">
                 <div>
                     <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Full Name</label>
-                    <input type="text" id="regFullName" required placeholder="e.g. Rahul Sharma" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                    <input type="text" id="regFullName" required placeholder="e.g. Rahul Sharma"
+                        class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
                 </div>
                 <div>
-                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">College / University</label>
-                    <input type="text" id="regCollege" placeholder="e.g. Delhi University, IIT, BITS" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">College /
+                        University</label>
+                    <input type="text" id="regCollege" placeholder="e.g. Delhi University, IIT, BITS"
+                        class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
                 </div>
                 <div>
                     <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Email Address</label>
-                    <input type="email" id="regEmail" required placeholder="student@college.edu" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                    <input type="email" id="regEmail" required placeholder="student@college.edu"
+                        class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
                 </div>
                 <div>
-                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Password (min 6 chars)</label>
-                    <input type="password" id="regPassword" required minlength="6" placeholder="••••••••" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Password (min 6
+                        chars)</label>
+                    <input type="password" id="regPassword" required minlength="6" placeholder="••••••••"
+                        class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
                 </div>
-                <button type="submit" id="regBtnSubmit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-sm shadow-emerald-600/30 flex items-center justify-center gap-2">
+                <button type="submit" id="regBtnSubmit"
+                    class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-sm shadow-emerald-600/30 flex items-center justify-center gap-2">
                     <span>Create Account</span>
                 </button>
             </form>
+        </div>
+    </div>
+    <!-- Modal: Bank / UPI Statement CSV Upload -->
+    <div id="csvUploadModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+                        <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Import Bank / UPI Statement</h3>
+                        <p class="text-[11px] text-slate-400">Upload transaction history exported as a CSV file</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('csvUploadModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Drag & Drop / File Input -->
+            <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-5 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer" onclick="document.getElementById('csvFileInput').click()">
+                <input type="file" id="csvFileInput" accept=".csv,text/csv" class="hidden" onchange="handleCsvFileSelected(event)" />
+                <i data-lucide="upload-cloud" class="w-8 h-8 text-emerald-500 mx-auto mb-1"></i>
+                <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">Click to choose a CSV file or drag & drop here</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Supports CSV columns: Date, Description, Amount</p>
+            </div>
+
+            <!-- Direct Paste Option -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-400">Or Paste CSV Statement Content</label>
+                    <button type="button" onclick="loadSampleCsvData()" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold">Load Sample Student Data</button>
+                </div>
+                <textarea id="csvTextInput" rows="4" placeholder="Date,Description,Amount&#10;01 Oct,College canteen,₹150&#10;02 Oct,Bus ticket,₹40&#10;03 Oct,Online shopping,₹500" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+            </div>
+
+            <!-- Status / Result Banner -->
+            <div id="csvResultBanner" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+            <div class="flex gap-2">
+                <button onclick="closeModal('csvUploadModal')" class="flex-1 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-600 dark:text-slate-300">Cancel</button>
+                <button onclick="processCsvImport()" id="btnImportCsv" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
+                    Import & Save Records
+                </button>
+            </div>
         </div>
     </div>
     <!-- Deposit into Goal Modal -->
@@ -698,7 +771,7 @@ Received Rs 5000 from Parents (Pocket money)..."
         let timelineChart = null;
 
         // Initialize defaults on first run
-        
+
         // Auth state and navigation
         let currentUser = JSON.parse(localStorage.getItem('cs_user') || 'null');
 
@@ -733,34 +806,34 @@ Received Rs 5000 from Parents (Pocket money)..."
         window.addEventListener('DOMContentLoaded', () => {
             syncAuthStateUI();
 
-    // Live Backend Health Monitoring
-    let isBackendOnline = false;
-    async function checkBackendHealth() {
-      const pill = document.getElementById('backendStatusPill');
-      const text = document.getElementById('backendStatusText');
-      if (!pill || !text) return;
+            // Live Backend Health Monitoring
+            let isBackendOnline = false;
+            async function checkBackendHealth() {
+                const pill = document.getElementById('backendStatusPill');
+                const text = document.getElementById('backendStatusText');
+                if (!pill || !text) return;
 
-      try {
-        const healthEndpoint = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000/api/health' : '/api/health';
-        const res = await fetch(healthEndpoint, { signal: AbortSignal.timeout(2000) });
-        if (res.ok) {
-          isBackendOnline = true;
-          pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
-          pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>Backend Connected (Port 5000)</span>';
-        } else {
-          throw new Error('Not ok');
-        }
-      } catch (e) {
-        isBackendOnline = false;
-        pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200';
-        pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span><span>Local Mode (Offline)</span>';
-      }
-    }
+                try {
+                    const healthEndpoint = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5000/api/health' : '/api/health';
+                    const res = await fetch(healthEndpoint, { signal: AbortSignal.timeout(2000) });
+                    if (res.ok) {
+                        isBackendOnline = true;
+                        pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                        pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>Backend Connected (Port 5000)</span>';
+                    } else {
+                        throw new Error('Not ok');
+                    }
+                } catch (e) {
+                    isBackendOnline = false;
+                    pill.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200';
+                    pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span><span>Local Mode (Offline)</span>';
+                }
+            }
 
-    // Call on load and every 5 seconds
-    checkBackendHealth();
-    setInterval(checkBackendHealth, 5000);
-  
+            // Call on load and every 5 seconds
+            checkBackendHealth();
+            setInterval(checkBackendHealth, 5000);
+
             document.getElementById('txDate').valueAsDate = new Date();
             if (state.transactions.length === 0 && state.goals.length === 0) {
                 loadSampleData(false); // Pre-fill student sample dataset

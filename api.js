@@ -40,7 +40,19 @@ export const Api = {
         return json;
     },
 
-    // 1. Parse & Log UPI SMS via Backend Engine
+    // 1. Upload Bank / UPI Statement CSV with PostgreSQL Deduplication
+    async uploadCsvStatement(csvData, userId = null) {
+        const res = await fetch(`${API_BASE_URL}/statements/upload-csv`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ csvData, userId })
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Failed to import CSV statement');
+        return json;
+    },
+
+    // 2. Parse & Log UPI SMS via Backend Engine
     async parseAndLogUpi(rawText, userId = null) {
         const res = await fetch(`${API_BASE_URL}/upi/parse-and-log`, {
             method: 'POST',
@@ -51,7 +63,7 @@ export const Api = {
         return await res.json();
     },
 
-    // 2. Fetch Transactions from Database
+    // 3. Fetch Transactions from Database
     async getTransactions(category = 'ALL', userId = null) {
         let url = `${API_BASE_URL}/transactions?category=${encodeURIComponent(category)}`;
         if (userId) url += `&userId=${userId}`;
@@ -61,7 +73,7 @@ export const Api = {
         return json.data || [];
     },
 
-    // 3. Create a Single Transaction
+    // 4. Create a Single Transaction
     async createTransaction(txData) {
         const res = await fetch(`${API_BASE_URL}/transactions`, {
             method: 'POST',
@@ -73,7 +85,7 @@ export const Api = {
         return json.data;
     },
 
-    // 4. Delete Transaction
+    // 5. Delete Transaction
     async deleteTransaction(id) {
         const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
             method: 'DELETE'
@@ -82,7 +94,7 @@ export const Api = {
         return await res.json();
     },
 
-    // 5. Fetch Dashboard Analytics & Month-End Forecast
+    // 6. Fetch Dashboard Analytics & Month-End Forecast
     async getAnalytics(userId = null) {
         let url = `${API_BASE_URL}/dashboard/analytics`;
         if (userId) url += `?userId=${userId}`;
@@ -92,7 +104,7 @@ export const Api = {
         return json.data;
     },
 
-    // 6. Savings Goals
+    // 7. Savings Goals
     async getGoals(userId = null) {
         let url = `${API_BASE_URL}/goals`;
         if (userId) url += `?userId=${userId}`;

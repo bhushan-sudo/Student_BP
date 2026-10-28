@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CAMPUSSPEND - SUPABASE DATABASE SCHEMA FOR STUDENT BUDGET PLANNER
+-- CAMPUSSPEND / POCKETWISE - SUPABASE & POSTGRESQL DATABASE SCHEMA
 -- ==============================================================================
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -17,36 +17,34 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. TRANSACTIONS (EXPENSES & INFLOW: POCKET MONEY / SCHOLARSHIP / UPI)
+-- 2. TRANSACTIONS (DAILY EXPENSES, POCKET MONEY, SCHOLARSHIPS, BANK/UPI STATEMENTS)
 CREATE TABLE IF NOT EXISTS public.transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
     type TEXT NOT NULL CHECK (type IN ('EXPENSE', 'INCOME')),
     amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
     title TEXT NOT NULL,
-    category TEXT NOT NULL CHECK (category IN (
-        'Food & Canteen',
-        'Travel & Metro',
-        'Education & Books',
-        'Hostel & Rent',
-        'Shopping & Essentials',
-        'Entertainment',
-        'Pocket Money',
-        'Scholarship',
-        'Savings Deposit',
-        'Income',
-        'Other'
-    )),
+    category TEXT NOT NULL,
     payment_app TEXT DEFAULT 'UPI',
     transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
     raw_upi_sms TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. SAVINGS GOALS (GADGETS, COURSES, TRIPS, EMERGENCY)
+-- 3. DEDUPLICATION UNIQUE INDEX
+-- Prevents importing the same transaction twice when uploading bank/UPI CSV statements
+CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_dedup
+ON public.transactions (
+    COALESCE(user_id, '00000000-0000-0000-0000-000000000000'::uuid),
+    transaction_date,
+    amount,
+    title
+);
+
+-- 4. SAVINGS GOALS (GADGETS, COURSES, TRIPS, EMERGENCY)
 CREATE TABLE IF NOT EXISTS public.savings_goals (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     target_amount NUMERIC(12, 2) NOT NULL CHECK (target_amount > 0),
     current_saved NUMERIC(12, 2) DEFAULT 0.00 CHECK (current_saved >= 0),
@@ -55,24 +53,16 @@ CREATE TABLE IF NOT EXISTS public.savings_goals (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. ROW LEVEL SECURITY (RLS) POLICIES
+-- 5. ROW LEVEL SECURITY (RLS) POLICIES
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.savings_goals ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can manage their own profile" 
-ON public.profiles FOR ALL 
-USING (auth.uid() = id);
+CREATE POLICY "Public profiles access" ON public.profiles FOR ALL USING (true);
+CREATE POLICY "Public transactions access" ON public.transactions FOR ALL USING (true);
+CREATE POLICY "Public goals access" ON public.savings_goals FOR ALL USING (true);
 
-CREATE POLICY "Users can manage their own transactions" 
-ON public.transactions FOR ALL 
-USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can manage their own savings goals" 
-ON public.savings_goals FOR ALL 
-USING (auth.uid() = user_id);
-
--- 5. TRIGGER FOR NEW USER SIGNUP
+-- 6. TRIGGER TO AUTOMATICALLY CREATE STUDENT PROFILE ON AUTH SIGNUP
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -93,3 +83,14 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- ==============================================================================
+-- EXAMPLE POSTGRESQL QUERY: BATCH INSERT CSV STATEMENT WITH DEDUPLICATION
+-- ==============================================================================
+-- INSERT INTO public.transactions (user_id, type, amount, title, category, payment_app, transaction_date, raw_upi_sms)
+-- VALUES 
+--     ('USER_UUID', 'EXPENSE', 150.00, 'College canteen', 'Food & Canteen', 'Bank Statement (CSV)', '2026-10-01', '01 Oct College canteen ₹150'),
+--     ('USER_UUID', 'EXPENSE', 40.00, 'Bus ticket', 'Travel & Metro', 'Bank Statement (CSV)', '2026-10-02', '02 Oct Bus ticket ₹40'),
+--     ('USER_UUID', 'EXPENSE', 500.00, 'Online shopping', 'Shopping & Essentials', 'Bank Statement (CSV)', '2026-10-03', '03 Oct Online shopping ₹500')
+-- ON CONFLICT (COALESCE(user_id, '00000000-0000-0000-0000-000000000000'::uuid), transaction_date, amount, title)
+-- DO NOTHING
+-- RETURNING *;

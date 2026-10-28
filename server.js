@@ -36,10 +36,10 @@ app.get('/database', (req, res) => {
 // Initialize Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const isSupabaseConfigured = supabaseUrl && 
-                             !supabaseUrl.includes('your-project') && 
-                             supabaseKey && 
-                             !supabaseKey.includes('your-supabase-key');
+const isSupabaseConfigured = supabaseUrl &&
+  !supabaseUrl.includes('your-project') &&
+  supabaseKey &&
+  !supabaseKey.includes('your-supabase-key');
 
 let supabase = null;
 if (isSupabaseConfigured) {
@@ -79,9 +79,9 @@ let memoryDb = {
 // UPI Parser Engine
 function parseUpiText(text) {
   const cleanText = text.trim();
-  const amtMatch = cleanText.match(/(?:Rs\.?|INR|₹)\s*([\d,]+(?:\.\d{1,2})?)/i) || 
-                   cleanText.match(/([\d,]+(?:\.\d{1,2})?)\s*(?:debited|credited|paid|transferred)/i);
-  
+  const amtMatch = cleanText.match(/(?:Rs\.?|INR|₹)\s*([\d,]+(?:\.\d{1,2})?)/i) ||
+    cleanText.match(/([\d,]+(?:\.\d{1,2})?)\s*(?:debited|credited|paid|transferred)/i);
+
   if (!amtMatch) return null;
   const amount = parseFloat(amtMatch[1].replace(/,/g, ''));
   if (isNaN(amount) || amount <= 0) return null;
@@ -264,6 +264,154 @@ app.post('/api/upi/parse-and-log', async (req, res) => {
       return res.status(201).json({ success: true, count: parsedItems.length, data: parsedItems });
     }
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// 4B. Upload Bank / UPI Statement CSV with PostgreSQL Deduplication
+app.post('/api/statements/upload-csv', async (req, res) => {
+  try {
+    const { csvData, userId } = req.body;
+    if (!csvData) {
+      return res.status(400).json({ error: 'csvData string or file content is required' });
+    }
+
+    const lines = csvData.split(/\r?\n/).filter(line => line.trim().length > 0);
+    if (lines.length < 2) {
+      return res.status(400).json({ error: 'CSV file is empty or missing data rows' });
+    }
+
+    // 1. Detect Header Column Indexes
+    const headerCols = lines[0].split(/[,\t]/).map(col => col.trim().toLowerCase().replace(/['"]/g, ''));
+    let dateIdx = headerCols.findIndex(c => c.includes('date'));
+    let descIdx = headerCols.findIndex(c => c.includes('desc') || c.includes('particular') || c.includes('narrat') || c.includes('title'));
+    let amountIdx = headerCols.findIndex(c => c.includes('amount') || c.includes('debit') || c.includes('withdrawal'));
+
+    if (dateIdx === -1) dateIdx = 0;
+    if (descIdx === -1) descIdx = 1;
+    if (amountIdx === -1) amountIdx = 2;
+
+    const parsedRows = [];
+    const currentYear = new Date().getFullYear();
+
+    // 2. Parse and Validate Each Row
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(/[,\t]/).map(c => c.trim().replace(/^["']|["']$/g, ''));
+      if (cols.length < 3) continue;
+
+      const rawDate = cols[dateIdx] || '';
+      const rawDesc = cols[descIdx] || 'Expense';
+      const rawAmount = cols[amountIdx] || '0';
+
+      const cleanAmt = parseFloat(rawAmount.replace(/[₹RsINR,\s]/gi, ''));
+      if (isNaN(cleanAmt) || cleanAmt <= 0) continue;
+
+      let txDate = new Date().toISOString().split('T')[0];
+      try {
+        const dateParts = rawDate.match(/(\d{1,2})\s+([A-Za-z]{3,9})/i);
+        if (dateParts) {
+          const day = dateParts[1].padStart(2, '0');
+          const monthStr = dateParts[2];
+          const monthIndex = new Date(`${monthStr} 1, 2000`).getMonth() + 1;
+          const month = String(monthIndex).padStart(2, '0');
+          txDate = `${currentYear}-${month}-${day}`;
+        } else if (!isNaN(Date.parse(rawDate))) {
+          txDate = new Date(rawDate).toISOString().split('T')[0];
+        }
+      } catch (e) {
+        txDate = new Date().toISOString().split('T')[0];
+      }
+
+      const descLower = rawDesc.toLowerCase();
+      let category = 'Other';
+      let type = 'EXPENSE';
+
+      if (/canteen|food|swiggy|zomato|chai|tea|cafe|lunch|dinner|breakfast|snack/i.test(descLower)) {
+        category = 'Food & Canteen';
+      } else if (/bus|metro|auto|rapido|uber|ola|train|irctc|fuel|petrol/i.test(descLower)) {
+        category = 'Travel & Metro';
+      } else if (/shopping|amazon|flipkart|myntra|blinkit|zepto/i.test(descLower)) {
+        category = 'Shopping & Essentials';
+      } else if (/book|xerox|college|tuition|fee|exam|stationery|udemy/i.test(descLower)) {
+        category = 'Education & Books';
+      } else if (/scholarship|pocket\s*money|allowance|salary|credit/i.test(descLower)) {
+        category = 'Scholarship';
+        type = 'INCOME';
+      }
+
+      parsedRows.push({
+        user_id: userId || null,
+        type,
+        amount: cleanAmt,
+        title: rawDesc,
+        category,
+        payment_app: 'Bank Statement (CSV)',
+        transaction_date: txDate,
+        raw_upi_sms: `CSV: ${rawDate} | ${rawDesc} | ₹${cleanAmt}`
+      });
+    }
+
+    if (parsedRows.length === 0) {
+      return res.status(422).json({ error: 'No valid transaction records found in the uploaded CSV.' });
+    }
+
+    // 3. PostgreSQL Deduplication & Database Storage
+    let insertedRows = [];
+    let duplicateCount = 0;
+
+    if (isSupabaseConfigured && supabase) {
+      let q = supabase.from('transactions').select('transaction_date, amount, title');
+      if (userId) q = q.eq('user_id', userId);
+      const { data: existingRows } = await q;
+
+      const existingSet = new Set(
+        (existingRows || []).map(r => `${r.transaction_date}_${Number(r.amount)}_${r.title.toLowerCase().trim()}`)
+      );
+
+      const uniqueToInsert = parsedRows.filter(row => {
+        const key = `${row.transaction_date}_${Number(row.amount)}_${row.title.toLowerCase().trim()}`;
+        if (existingSet.has(key)) {
+          duplicateCount++;
+          return false;
+        }
+        existingSet.add(key);
+        return true;
+      });
+
+      if (uniqueToInsert.length > 0) {
+        const { data, error } = await supabase.from('transactions').insert(uniqueToInsert).select();
+        if (error) throw error;
+        insertedRows = data;
+      }
+    } else {
+      const existingSet = new Set(
+        memoryDb.transactions.map(r => `${r.transaction_date}_${Number(r.amount)}_${r.title.toLowerCase().trim()}`)
+      );
+
+      parsedRows.forEach(row => {
+        const key = `${row.transaction_date}_${Number(row.amount)}_${row.title.toLowerCase().trim()}`;
+        if (existingSet.has(key)) {
+          duplicateCount++;
+        } else {
+          row.id = 'csv_' + Date.now() + Math.random().toString(36).substr(2, 4);
+          memoryDb.transactions.unshift(row);
+          insertedRows.push(row);
+          existingSet.add(key);
+        }
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      totalRows: parsedRows.length,
+      importedCount: insertedRows.length,
+      duplicateCount,
+      data: insertedRows,
+      message: `Successfully imported ${insertedRows.length} transactions (${duplicateCount} duplicates skipped).`
+    });
+  } catch (err) {
+    console.error('Error importing statement CSV:', err);
     res.status(500).json({ error: err.message });
   }
 });
