@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Database Connection & Setup - CampusSpend</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-sm">
+            <i data-lucide="database" class="w-5 h-5"></i>
+          </div>
+          <span class="font-bold text-lg text-slate-900">Database & Backend Setup</span>
+        </div>
+      </div>
+      <a href="index.html" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-1.5">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        Back to Dashboard
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto w-full px-4 py-8 space-y-8 flex-1">
+    
+    <!-- Connection Status Banner -->
+    <div id="statusBanner" class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between transition">
+      <div class="flex items-center gap-3">
+        <span class="p-2 bg-amber-100 rounded-xl text-amber-700" id="statusIcon">
+          <i data-lucide="shield-alert" class="w-5 h-5"></i>
+        </span>
+        <div>
+          <h4 class="font-bold text-sm text-amber-900" id="statusTitle">Backend Status Checking...</h4>
+          <p class="text-xs text-amber-700" id="statusSub">Verifying connection to Node.js backend (http://localhost:5000) and Supabase database.</p>
+        </div>
+      </div>
+      <button onclick="checkAllConnections()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
+        Test Now
+      </button>
+    </div>
+
+    <!-- Credentials & Backend Card -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="lg:col-span-2 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+            <i data-lucide="key-round" class="w-5 h-5 text-indigo-600"></i>
+            Supabase Cloud Credentials
+          </h3>
+          <span class="text-[11px] text-slate-400">Stored in localStorage & .env</span>
+        </div>
+
+        <form onsubmit="handleSaveConfig(event)" class="space-y-4 text-xs">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Project URL</label>
+            <input type="url" id="supabaseUrl" required placeholder="https://yourproject.supabase.co" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Anon / Public API Key</label>
+            <input type="password" id="supabaseKey" required placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm">
+              Save & Test Connection
+            </button>
+            <button type="button" onclick="disconnectSupabase()" class="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold rounded-xl transition">
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Health Status -->
+      <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+        <div>
+          <h3 class="font-bold text-base text-slate-900 mb-3 flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+            Service Status
+          </h3>
+          <ul class="space-y-2.5 text-xs text-slate-600">
+            <li class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+              <span class="font-medium">Node.js API (localhost:5000)</span>
+              <span id="healthBackend" class="font-bold text-slate-400">Checking...</span>
+            </li>
+            <li class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+              <span class="font-medium">Supabase Cloud DB</span>
+              <span id="healthDatabase" class="font-bold text-slate-400">Untested</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100 text-[11px] text-indigo-800">
+          <strong>Tip:</strong> Start the backend server by running <code>npm start</code> in your terminal.
+        </div>
+      </div>
+    </div>
+
+    <!-- SQL Schema Viewer -->
+    <div class="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+            <i data-lucide="terminal" class="w-5 h-5 text-slate-700"></i>
+            PostgreSQL Database Schema (schema.sql)
+          </h3>
+          <p class="text-xs text-slate-500">Run this SQL in your Supabase SQL Editor if you are creating tables for the first time.</p>
+        </div>
+        <button onclick="copySqlSchema()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-1.5 transition">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span id="copyBtnText">Copy SQL Script</span>
+        </button>
+      </div>
+
+      <div class="relative">
+        <pre class="bg-slate-900 text-slate-200 p-4 rounded-xl text-xs font-mono overflow-x-auto max-h-64 leading-relaxed" id="sqlBlock">
+CREATE TABLE IF NOT EXISTS public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email TEXT,
+    full_name TEXT,
+    currency TEXT DEFAULT 'INR',
+    monthly_budget_limit NUMERIC(12, 2) DEFAULT 8000.00,
+    daily_budget_limit NUMERIC(12, 2) DEFAULT 350.00,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    type TEXT NOT NULL CHECK (type IN ('EXPENSE', 'INCOME')),
+    amount NUMERIC(12, 2) NOT NULL,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    payment_app TEXT DEFAULT 'UPI',
+    transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    raw_upi_sms TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.savings_goals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    target_amount NUMERIC(12, 2) NOT NULL,
+    current_saved NUMERIC(12, 2) DEFAULT 0.00,
+    deadline DATE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+        </pre>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      document.getElementById('supabaseUrl').value = localStorage.getItem('cs_sb_url') || '';
+      document.getElementById('supabaseKey').value = localStorage.getItem('cs_sb_key') || '';
+      checkAllConnections();
+    });
+
+    async function checkAllConnections() {
+      // 1. Check Node backend
+      const bEl = document.getElementById('healthBackend');
+      try {
+        const res = await fetch('http://localhost:5000/api/health');
+        if (res.ok) {
+          bEl.innerHTML = '<span class="text-emerald-600 font-bold">Online (Active)</span>';
+          updateBanner(true, 'Node.js Backend Connected on port 5000');
+        } else {
+          bEl.innerHTML = '<span class="text-amber-500 font-semibold">Offline</span>';
+          updateBanner(false, 'Node.js Backend not detected. Run "npm start" in terminal');
+        }
+      } catch {
+        bEl.innerHTML = '<span class="text-amber-500 font-semibold">Offline</span>';
+        updateBanner(false, 'Node.js Backend not running. Run "npm start"');
+      }
+
+      // 2. Check Supabase
+      const url = document.getElementById('supabaseUrl').value.trim();
+      const key = document.getElementById('supabaseKey').value.trim();
+      const dEl = document.getElementById('healthDatabase');
+      if (url && key && window.supabase) {
+        try {
+          const client = window.supabase.createClient(url, key);
+          const { error } = await client.from('transactions').select('id').limit(1);
+          if (!error) {
+            dEl.innerHTML = '<span class="text-emerald-600 font-bold">Connected</span>';
+          } else {
+            dEl.innerHTML = '<span class="text-rose-500 font-semibold">Config Error</span>';
+          }
+        } catch {
+          dEl.innerHTML = '<span class="text-rose-500 font-semibold">Error</span>';
+        }
+      } else {
+        dEl.innerHTML = '<span class="text-slate-400">Not configured</span>';
+      }
+    }
+
+    function updateBanner(isOnline, message) {
+      const banner = document.getElementById('statusBanner');
+      const title = document.getElementById('statusTitle');
+      const sub = document.getElementById('statusSub');
+      const icon = document.getElementById('statusIcon');
+
+      if (isOnline) {
+        banner.className = 'p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between transition';
+        icon.className = 'p-2 bg-emerald-100 rounded-xl text-emerald-700';
+        icon.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5"></i>';
+        title.innerText = 'Connected & Active';
+        title.className = 'font-bold text-sm text-emerald-900';
+        sub.innerText = message;
+        sub.className = 'text-xs text-emerald-700';
+      } else {
+        banner.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between transition';
+        icon.className = 'p-2 bg-amber-100 rounded-xl text-amber-700';
+        icon.innerHTML = '<i data-lucide="alert-circle" class="w-5 h-5"></i>';
+        title.innerText = 'Local Storage Mode';
+        title.className = 'font-bold text-sm text-amber-900';
+        sub.innerText = message;
+        sub.className = 'text-xs text-amber-700';
+      }
+      lucide.createIcons();
+    }
+
+    function handleSaveConfig(e) {
+      e.preventDefault();
+      localStorage.setItem('cs_sb_url', document.getElementById('supabaseUrl').value.trim());
+      localStorage.setItem('cs_sb_key', document.getElementById('supabaseKey').value.trim());
+      checkAllConnections();
+    }
+
+    function disconnectSupabase() {
+      localStorage.removeItem('cs_sb_url');
+      localStorage.removeItem('cs_sb_key');
+      document.getElementById('supabaseUrl').value = '';
+      document.getElementById('supabaseKey').value = '';
+      checkAllConnections();
+    }
+
+    function copySqlSchema() {
+      const sqlText = document.getElementById('sqlBlock').innerText;
+      navigator.clipboard.writeText(sqlText).then(() => {
+        const btn = document.getElementById('copyBtnText');
+        btn.innerText = 'Copied to Clipboard!';
+        setTimeout(() => { btn.innerText = 'Copy SQL Script'; }, 2500);
+      });
+    }
+  </script>
+</body>
+</html>
