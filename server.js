@@ -10,11 +10,21 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files (index.html, database.html, api.js, icons, etc.)
+// Serve static frontend files (index.html, dashboard.html, database.html, api.js, icons, etc.)
 app.use(express.static(path.join(__dirname)));
 
-// Root route: serve index.html
+// Root route: serve landing page (index.html)
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Dashboard route: serve dashboard.html
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+// Landing alias route
+app.get('/landing', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
