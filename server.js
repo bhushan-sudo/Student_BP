@@ -142,7 +142,89 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 2. UPI SMS Parser & Logger
+// 2. Authentication: Register (Sign Up)
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, password, fullName, collegeName } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName || 'Student',
+            college_name: collegeName || ''
+          }
+        }
+      });
+      if (error) throw error;
+      return res.status(201).json({
+        success: true,
+        user: data.user,
+        session: data.session,
+        message: 'Account created successfully!'
+      });
+    } else {
+      const mockUser = {
+        id: 'usr_' + Date.now(),
+        email,
+        user_metadata: { full_name: fullName || 'Student', college_name: collegeName || '' }
+      };
+      return res.status(201).json({
+        success: true,
+        user: mockUser,
+        message: 'Account created in demo mode!'
+      });
+    }
+  } catch (err) {
+    console.error('Register error:', err);
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// 3. Authentication: Login (Sign In)
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      if (error) throw error;
+      return res.json({
+        success: true,
+        user: data.user,
+        session: data.session,
+        message: 'Logged in successfully!'
+      });
+    } else {
+      const mockUser = {
+        id: 'usr_demo',
+        email,
+        user_metadata: { full_name: email.split('@')[0] }
+      };
+      return res.json({
+        success: true,
+        user: mockUser,
+        message: 'Logged in in demo mode!'
+      });
+    }
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// 4. UPI SMS Parser & Logger
 app.post('/api/upi/parse-and-log', async (req, res) => {
   try {
     const { rawText, userId } = req.body;
@@ -176,7 +258,7 @@ app.post('/api/upi/parse-and-log', async (req, res) => {
   }
 });
 
-// 3. Transactions CRUD
+// 5. Transactions CRUD
 app.get('/api/transactions', async (req, res) => {
   try {
     const { category, userId } = req.query;
@@ -241,12 +323,15 @@ app.delete('/api/transactions/:id', async (req, res) => {
   }
 });
 
-// 4. Dashboard Analytics & Forecasting
+// 6. Dashboard Analytics & Forecasting
 app.get('/api/dashboard/analytics', async (req, res) => {
   try {
+    const { userId } = req.query;
     let txList = [];
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.from('transactions').select('*');
+      let q = supabase.from('transactions').select('*');
+      if (userId) q = q.eq('user_id', userId);
+      const { data, error } = await q;
       if (error) throw error;
       txList = data || [];
     } else {
@@ -301,11 +386,14 @@ app.get('/api/dashboard/analytics', async (req, res) => {
   }
 });
 
-// 5. Savings Goals
+// 7. Savings Goals
 app.get('/api/goals', async (req, res) => {
   try {
+    const { userId } = req.query;
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.from('savings_goals').select('*').order('created_at', { ascending: true });
+      let q = supabase.from('savings_goals').select('*').order('created_at', { ascending: true });
+      if (userId) q = q.eq('user_id', userId);
+      const { data, error } = await q;
       if (error) throw error;
       return res.json({ success: true, data });
     } else {

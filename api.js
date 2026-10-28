@@ -16,6 +16,30 @@ export const Api = {
     }
   },
 
+  // Auth: Register Student Account
+  async register(email, password, fullName, collegeName) {
+    const res = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, fullName, collegeName })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'Registration failed');
+    return json;
+  },
+
+  // Auth: Login Student
+  async login(email, password) {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'Login failed');
+    return json;
+  },
+
   // 1. Parse & Log UPI SMS via Backend Engine
   async parseAndLogUpi(rawText, userId = null) {
     const res = await fetch(`${API_BASE_URL}/upi/parse-and-log`, {

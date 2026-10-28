@@ -76,6 +76,20 @@
                     <i data-lucide="smartphone" class="w-4 h-4"></i>
                     <span>Import UPI SMS</span>
                 </button>
+                <!-- Auth Button / Profile Badge -->
+                <button id="authNavBtn" onclick="openAuthModal('login')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs sm:text-sm font-semibold transition shadow-sm shadow-indigo-600/30">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span>Login / Register</span>
+                </button>
+                <div id="authProfilePill" class="hidden flex items-center gap-2">
+                    <div class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800">
+                        <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white font-bold flex items-center justify-center text-xs" id="userInitial">S</span>
+                        <span class="text-xs font-semibold text-slate-800 dark:text-slate-200" id="userGreeting">Student</span>
+                    </div>
+                    <button onclick="handleLogout()" title="Log Out" class="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
                 <!-- Add Expense Button -->
                 <button onclick="openModal('addTxModal')"
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs sm:text-sm font-semibold transition shadow-sm shadow-indigo-600/30">
@@ -108,7 +122,7 @@
                     <i data-lucide="indian-rupee" class="w-4 h-4 text-emerald-500"></i>
                 </div>
                 <div class="mt-2 flex items-baseline gap-2">
-                    <span class="text-3xl font-extrabold text-slate-900 dark:text-white" id="statBalance">â‚¹0</span>
+                    <span class="text-3xl font-extrabold text-slate-900 dark:text-white" id="statBalance">₹0</span>
                 </div>
                 <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Total Inflow âˆ’ Total Expenses</p>
                 <div
@@ -125,9 +139,9 @@
                     <i data-lucide="trending-down" class="w-4 h-4 text-rose-500"></i>
                 </div>
                 <div class="mt-2 flex items-baseline gap-2">
-                    <span class="text-3xl font-extrabold text-rose-600 dark:text-rose-400" id="statTotalSpent">â‚¹0</span>
+                    <span class="text-3xl font-extrabold text-rose-600 dark:text-rose-400" id="statTotalSpent">₹0</span>
                 </div>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400" id="statDailyBurn">Burn: â‚¹0 / day average</p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400" id="statDailyBurn">Burn: ₹0 / day average</p>
                 <div
                     class="absolute -right-3 -bottom-3 w-16 h-16 bg-rose-500/10 rounded-full blur-xl pointer-events-none">
                 </div>
@@ -143,7 +157,7 @@
                 </div>
                 <div class="mt-2 flex items-baseline gap-2">
                     <span class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400"
-                        id="statTotalInflow">â‚¹0</span>
+                        id="statTotalInflow">₹0</span>
                 </div>
                 <p class="mt-1 text-xs text-slate-500 dark:text-slate-400" id="statInflowSub">Scholarship + Pocket Money
                 </p>
@@ -161,7 +175,7 @@
                     <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
                 </div>
                 <div class="mt-2 flex items-baseline gap-2">
-                    <span class="text-3xl font-extrabold" id="statForecast">â‚¹0</span>
+                    <span class="text-3xl font-extrabold" id="statForecast">₹0</span>
                 </div>
                 <p class="mt-1 text-xs text-slate-500 dark:text-slate-400" id="statForecastNote">Based on your current
                     burn pace</p>
@@ -197,8 +211,8 @@
                     <div>
                         <div class="flex justify-between items-center text-sm mb-1.5 font-medium">
                             <span class="text-slate-700 dark:text-slate-300">Monthly Budget Usage</span>
-                            <span class="text-slate-900 dark:text-white font-bold" id="monthlyBudgetLabel">â‚¹0 /
-                                â‚¹10,000</span>
+                            <span class="text-slate-900 dark:text-white font-bold" id="monthlyBudgetLabel">₹0 /
+                                ₹10,000</span>
                         </div>
                         <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
                             <div id="monthlyProgressBar"
@@ -207,7 +221,7 @@
                         </div>
                         <div class="flex justify-between text-[11px] text-slate-400 mt-1">
                             <span id="monthlyBudgetPct">0% spent</span>
-                            <span id="monthlyBudgetRemaining">â‚¹10,000 remaining</span>
+                            <span id="monthlyBudgetRemaining">₹10,000 remaining</span>
                         </div>
                     </div>
 
@@ -215,8 +229,8 @@
                     <div>
                         <div class="flex justify-between items-center text-sm mb-1.5 font-medium">
                             <span class="text-slate-700 dark:text-slate-300">Today's Daily Spending</span>
-                            <span class="text-slate-900 dark:text-white font-bold" id="dailyBudgetLabel">â‚¹0 /
-                                â‚¹300</span>
+                            <span class="text-slate-900 dark:text-white font-bold" id="dailyBudgetLabel">₹0 /
+                                ₹300</span>
                         </div>
                         <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
                             <div id="dailyProgressBar"
@@ -225,7 +239,7 @@
                         </div>
                         <div class="flex justify-between text-[11px] text-slate-400 mt-1">
                             <span id="dailyBudgetPct">0% of daily limit</span>
-                            <span id="dailyBudgetRemaining">â‚¹300 safe to spend today</span>
+                            <span id="dailyBudgetRemaining">₹300 safe to spend today</span>
                         </div>
                     </div>
                 </div>
@@ -412,7 +426,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Amount (â‚¹)</label>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Amount (₹)</label>
                     <input type="number" id="txAmount" required step="any" min="1" placeholder="e.g. 150"
                         class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
@@ -521,17 +535,17 @@ Received Rs 5000 from Parents (Pocket money)..."
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Monthly Spending Budget
-                        (â‚¹)</label>
+                        (₹)</label>
                     <input type="number" id="inputMonthlyBudget"
                         class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold" />
                     <span class="text-[10px] text-slate-400">Total max amount you want to spend this month</span>
                 </div>
                 <div>
                     <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Daily Spending Limit
-                        (â‚¹)</label>
+                        (₹)</label>
                     <input type="number" id="inputDailyBudget"
                         class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold" />
-                    <span class="text-[10px] text-slate-400">Recommended daily threshold (e.g. â‚¹250 - â‚¹500)</span>
+                    <span class="text-[10px] text-slate-400">Recommended daily threshold (e.g. ₹250 - ₹500)</span>
                 </div>
                 <button onclick="saveBudgetLimits()"
                     class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition">
@@ -559,13 +573,13 @@ Received Rs 5000 from Parents (Pocket money)..."
                         class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" />
                 </div>
                 <div>
-                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Target Amount (â‚¹)</label>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Target Amount (₹)</label>
                     <input type="number" id="goalTarget" required min="100" placeholder="e.g. 15000"
                         class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" />
                 </div>
                 <div>
                     <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Initial Saved Amount
-                        (â‚¹)</label>
+                        (₹)</label>
                     <input type="number" id="goalSaved" min="0" value="0"
                         class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" />
                 </div>
@@ -582,13 +596,80 @@ Received Rs 5000 from Parents (Pocket money)..."
         </div>
     </div>
 
+    <!-- Modal 5: Authentication (Login & Register) -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">Student Account</h3>
+                </div>
+                <button onclick="closeModal('authModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-xs font-semibold">
+                <button id="authTabLogin" onclick="switchAuthTab('login')" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm transition">
+                    Sign In
+                </button>
+                <button id="authTabRegister" onclick="switchAuthTab('register')" class="flex-1 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition">
+                    Create Account
+                </button>
+            </div>
+
+            <!-- Alert / Error message container -->
+            <div id="authAlert" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+            <!-- Form: Login -->
+            <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="student@college.edu" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+                <div>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+                <button type="submit" id="loginBtnSubmit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-600/30 flex items-center justify-center gap-2">
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <!-- Form: Register -->
+            <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Full Name</label>
+                    <input type="text" id="regFullName" required placeholder="e.g. Rahul Sharma" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+                <div>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">College / University</label>
+                    <input type="text" id="regCollege" placeholder="e.g. Delhi University, IIT, BITS" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+                <div>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Email Address</label>
+                    <input type="email" id="regEmail" required placeholder="student@college.edu" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+                <div>
+                    <label class="block text-slate-600 dark:text-slate-400 font-medium mb-1">Password (min 6 chars)</label>
+                    <input type="password" id="regPassword" required minlength="6" placeholder="••••••••" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+                <button type="submit" id="regBtnSubmit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-sm shadow-emerald-600/30 flex items-center justify-center gap-2">
+                    <span>Create Account</span>
+                </button>
+            </form>
+        </div>
+    </div>
     <!-- Deposit into Goal Modal -->
     <div id="depositGoalModal"
         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div
             class="bg-white dark:bg-slate-900 rounded-2xl max-w-xs w-full p-5 border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
             <h3 class="text-sm font-bold text-slate-900 dark:text-white" id="depositGoalHeading">Deposit Funds</h3>
-            <input type="number" id="depositAmount" min="1" placeholder="Enter amount (â‚¹)"
+            <input type="number" id="depositAmount" min="1" placeholder="Enter amount (₹)"
                 class="w-full p-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" />
             <div class="flex gap-2">
                 <button onclick="closeModal('depositGoalModal')"
@@ -713,7 +794,7 @@ Received Rs 5000 from Parents (Pocket money)..."
             lines.forEach(line => {
                 const text = line.trim();
                 // Regex patterns for Indian Bank / UPI SMS format
-                const amtMatch = text.match(/(?:Rs\.?|INR|â‚¹)\s*([\d,]+(?:\.\d{1,2})?)/i) ||
+                const amtMatch = text.match(/(?:Rs\.?|INR|₹)\s*([\d,]+(?:\.\d{1,2})?)/i) ||
                     text.match(/([\d,]+(?:\.\d{1,2})?)\s*(?:debited|credited|paid|transferred)/i);
 
                 if (!amtMatch) return;
@@ -945,13 +1026,13 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
             const projectedMonthEndBalance = totalInflow - projectedMonthEndExpense;
 
             // Update DOM
-            document.getElementById('statBalance').innerText = `â‚¹${balance.toLocaleString('en-IN')}`;
-            document.getElementById('statTotalSpent').innerText = `â‚¹${totalExpense.toLocaleString('en-IN')}`;
-            document.getElementById('statTotalInflow').innerText = `â‚¹${totalInflow.toLocaleString('en-IN')}`;
-            document.getElementById('statDailyBurn').innerText = `Avg Burn: â‚¹${Math.round(burnRatePerDay)}/day (${daysRemaining} days left)`;
+            document.getElementById('statBalance').innerText = `₹${balance.toLocaleString('en-IN')}`;
+            document.getElementById('statTotalSpent').innerText = `₹${totalExpense.toLocaleString('en-IN')}`;
+            document.getElementById('statTotalInflow').innerText = `₹${totalInflow.toLocaleString('en-IN')}`;
+            document.getElementById('statDailyBurn').innerText = `Avg Burn: ₹${Math.round(burnRatePerDay)}/day (${daysRemaining} days left)`;
 
             const forecastEl = document.getElementById('statForecast');
-            forecastEl.innerText = `â‚¹${Math.round(projectedMonthEndBalance).toLocaleString('en-IN')}`;
+            forecastEl.innerText = `₹${Math.round(projectedMonthEndBalance).toLocaleString('en-IN')}`;
             if (projectedMonthEndBalance < 0) {
                 forecastEl.className = 'text-3xl font-extrabold text-rose-500';
                 document.getElementById('statForecastNote').innerText = 'âš ï¸ Projected deficit! Reduce daily spend';
@@ -963,12 +1044,12 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
             // Budget Progress Bars
             const monthlyBudget = state.budgetLimits.monthly;
             const monthlySpentPct = Math.min(100, Math.round((totalExpense / monthlyBudget) * 100));
-            document.getElementById('monthlyBudgetLabel').innerText = `â‚¹${totalExpense.toLocaleString('en-IN')} / â‚¹${monthlyBudget.toLocaleString('en-IN')}`;
+            document.getElementById('monthlyBudgetLabel').innerText = `₹${totalExpense.toLocaleString('en-IN')} / ₹${monthlyBudget.toLocaleString('en-IN')}`;
             document.getElementById('monthlyBudgetPct').innerText = `${monthlySpentPct}% used`;
             const remMonthly = monthlyBudget - totalExpense;
             document.getElementById('monthlyBudgetRemaining').innerText = remMonthly >= 0
-                ? `â‚¹${remMonthly.toLocaleString('en-IN')} remaining`
-                : `â‚¹${Math.abs(remMonthly).toLocaleString('en-IN')} over budget!`;
+                ? `₹${remMonthly.toLocaleString('en-IN')} remaining`
+                : `₹${Math.abs(remMonthly).toLocaleString('en-IN')} over budget!`;
 
             const mBar = document.getElementById('monthlyProgressBar');
             mBar.style.width = `${monthlySpentPct}%`;
@@ -977,12 +1058,12 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
             // Daily Limit
             const dailyBudget = state.budgetLimits.daily;
             const dailySpentPct = Math.min(100, Math.round((todayExpense / dailyBudget) * 100));
-            document.getElementById('dailyBudgetLabel').innerText = `â‚¹${todayExpense.toLocaleString('en-IN')} / â‚¹${dailyBudget.toLocaleString('en-IN')}`;
+            document.getElementById('dailyBudgetLabel').innerText = `₹${todayExpense.toLocaleString('en-IN')} / ₹${dailyBudget.toLocaleString('en-IN')}`;
             document.getElementById('dailyBudgetPct').innerText = `${dailySpentPct}% of today's limit`;
             const remDaily = dailyBudget - todayExpense;
             document.getElementById('dailyBudgetRemaining').innerText = remDaily >= 0
-                ? `â‚¹${remDaily.toLocaleString('en-IN')} safe to spend today`
-                : `â‚¹${Math.abs(remDaily).toLocaleString('en-IN')} exceeded daily cap!`;
+                ? `₹${remDaily.toLocaleString('en-IN')} safe to spend today`
+                : `₹${Math.abs(remDaily).toLocaleString('en-IN')} exceeded daily cap!`;
 
             const dBar = document.getElementById('dailyProgressBar');
             dBar.style.width = `${dailySpentPct}%`;
@@ -1013,7 +1094,7 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
           <div class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 flex items-center justify-between text-xs animate-pulse">
             <div class="flex items-center gap-2">
               <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
-              <span><strong>Daily Alert:</strong> You have exceeded your daily spending limit of â‚¹${state.budgetLimits.daily}! Try pausing food delivery & non-essential orders today.</span>
+              <span><strong>Daily Alert:</strong> You have exceeded your daily spending limit of ₹${state.budgetLimits.daily}! Try pausing food delivery & non-essential orders today.</span>
             </div>
             <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-rose-200 dark:bg-rose-900 text-rose-900 dark:text-rose-100">BREACH</span>
           </div>`;
@@ -1030,7 +1111,7 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
           <div class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2">
               <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
-              <span><strong>Monthly Budget Cap Exceeded:</strong> Total spending has crossed your â‚¹${state.budgetLimits.monthly} limit!</span>
+              <span><strong>Monthly Budget Cap Exceeded:</strong> Total spending has crossed your ₹${state.budgetLimits.monthly} limit!</span>
             </div>
           </div>`;
             }
@@ -1060,7 +1141,7 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
             <div class="flex items-start justify-between">
               <div>
                 <h4 class="font-bold text-sm text-slate-900 dark:text-white">${goal.title}</h4>
-                <p class="text-[11px] text-slate-400">Target: â‚¹${goal.target.toLocaleString('en-IN')}</p>
+                <p class="text-[11px] text-slate-400">Target: ₹${goal.target.toLocaleString('en-IN')}</p>
               </div>
               <button onclick="deleteGoal('${goal.id}')" class="text-slate-400 hover:text-rose-500 transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -1069,7 +1150,7 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
 
             <div>
               <div class="flex justify-between text-xs mb-1 font-semibold">
-                <span class="text-emerald-600 dark:text-emerald-400">â‚¹${goal.saved.toLocaleString('en-IN')}</span>
+                <span class="text-emerald-600 dark:text-emerald-400">₹${goal.saved.toLocaleString('en-IN')}</span>
                 <span class="text-slate-500">${pct}%</span>
               </div>
               <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
@@ -1078,7 +1159,7 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
             </div>
 
             <div class="text-[11px] text-slate-500 flex justify-between items-center border-t border-slate-200/60 dark:border-slate-700/60 pt-2">
-              <span>Save <strong>â‚¹${dailyNeed}/day</strong></span>
+              <span>Save <strong>₹${dailyNeed}/day</strong></span>
               <button onclick="promptDeposit('${goal.id}')" class="px-2 py-1 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 font-bold hover:bg-emerald-200 transition text-[10px]">
                 + Deposit
               </button>
@@ -1132,7 +1213,7 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
             </span>
           </td>
           <td class="py-3 px-2 text-right font-extrabold ${isIncome ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'}">
-            ${isIncome ? '+' : '-'}â‚¹${tx.amount.toLocaleString('en-IN')}
+            ${isIncome ? '+' : '-'}₹${tx.amount.toLocaleString('en-IN')}
           </td>
           <td class="py-3 px-2 text-center">
             <button onclick="deleteTransaction('${tx.id}')" class="p-1 rounded text-slate-300 hover:text-rose-500 opacity-60 hover:opacity-100 transition">
@@ -1219,7 +1300,7 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
                 data: {
                     labels: timeLabels.length > 0 ? timeLabels : ['Today'],
                     datasets: [{
-                        label: 'Daily Spent (â‚¹)',
+                        label: 'Daily Spent (₹)',
                         data: timeData.length > 0 ? timeData : [0],
                         backgroundColor: '#6366f1',
                         borderRadius: 6
@@ -1295,6 +1376,69 @@ Paid Rs. 350 to University Book Stall for Engineering Notes`;
             saveState();
             if (showToast) triggerConfetti();
         }
+    </script>
+
+    <!-- API Bridge: Load api.js and expose globally -->
+    <script>
+        // Inline API Bridge (auto-detects local vs Vercel)
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const API_BASE_URL = isLocal ? 'http://localhost:5000/api' : '/api';
+
+        const Api = {
+            async checkHealth() {
+                try { const r = await fetch(API_BASE_URL + '/health'); return r.ok; } catch { return false; }
+            },
+            async register(email, password, fullName, collegeName) {
+                const r = await fetch(API_BASE_URL + '/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, fullName, collegeName })
+                });
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.error || 'Registration failed');
+                return d;
+            },
+            async login(email, password) {
+                const r = await fetch(API_BASE_URL + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.error || 'Login failed');
+                return d;
+            },
+            async getTransactions(category = 'ALL', userId = null) {
+                let url = API_BASE_URL + '/transactions?category=' + encodeURIComponent(category);
+                if (userId) url += '&userId=' + userId;
+                const r = await fetch(url);
+                if (!r.ok) throw new Error('Failed to fetch transactions');
+                return (await r.json()).data || [];
+            },
+            async createTransaction(txData) {
+                const r = await fetch(API_BASE_URL + '/transactions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(txData)
+                });
+                if (!r.ok) throw new Error('Failed to create transaction');
+                return (await r.json()).data;
+            },
+            async getGoals(userId = null) {
+                let url = API_BASE_URL + '/goals';
+                if (userId) url += '?userId=' + userId;
+                const r = await fetch(url);
+                if (!r.ok) throw new Error('Failed to fetch goals');
+                return (await r.json()).data || [];
+            },
+            async getAnalytics(userId = null) {
+                let url = API_BASE_URL + '/dashboard/analytics';
+                if (userId) url += '?userId=' + userId;
+                const r = await fetch(url);
+                if (!r.ok) throw new Error('Failed to fetch analytics');
+                return (await r.json()).data;
+            }
+        };
     </script>
 </body>
 
