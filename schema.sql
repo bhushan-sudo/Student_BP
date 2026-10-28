@@ -66,11 +66,12 @@ CREATE POLICY "Public goals access" ON public.savings_goals FOR ALL USING (true)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, full_name, monthly_budget_limit, daily_budget_limit)
+  INSERT INTO public.profiles (id, email, full_name, college_name, monthly_budget_limit, daily_budget_limit)
   VALUES (
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'full_name', 'Student'),
+    NEW.raw_user_meta_data->>'college_name',
     8000.00,
     350.00
   );

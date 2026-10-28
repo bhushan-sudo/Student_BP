@@ -1,4 +1,30 @@
 require('dotenv').config();
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+  const origLookup = dns.lookup;
+  dns.lookup = (hostname, options, callback) => {
+    if (typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+    if (hostname && hostname.includes('supabase.co')) {
+      dns.resolve4(hostname, (err, addrs) => {
+        if (!err && addrs && addrs.length > 0) {
+          if (options && options.all) {
+            return callback(null, addrs.map(a => ({ address: a, family: 4 })));
+          }
+          return callback(null, addrs[0], 4);
+        }
+        origLookup(hostname, options, callback);
+      });
+    } else {
+      origLookup(hostname, options, callback);
+    }
+  };
+} catch (e) {
+  // Graceful fallback
+}
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -161,21 +187,60 @@ app.post('/api/auth/register', async (req, res) => {
     }
 
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
+      let createdUser = null;
+      let session = null;
+
+      // 1. Attempt admin user creation so email is auto-confirmed immediately
+      try {
+        const { data: adminData, error: adminErr } = await supabase.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: {
             full_name: fullName || 'Student',
             college_name: collegeName || ''
           }
+        });
+        if (adminErr) throw adminErr;
+        createdUser = adminData.user;
+      } catch (adminErr) {
+        // Fallback to standard signUp if admin API has any restrictions
+        const { data: signData, error: signErr } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName || 'Student',
+              college_name: collegeName || ''
+            }
+          }
+        });
+        if (signErr) throw signErr;
+        createdUser = signData.user;
+        session = signData.session;
+      }
+
+      // 2. Guarantee profile row in public.profiles table
+      if (createdUser) {
+        try {
+          await supabase.from('profiles').upsert({
+            id: createdUser.id,
+            email: createdUser.email,
+            full_name: fullName || 'Student',
+            college_name: collegeName || '',
+            monthly_budget_limit: 8000.00,
+            daily_budget_limit: 350.00,
+            updated_at: new Date().toISOString()
+          });
+        } catch (profErr) {
+          console.warn('Profile upsert warning:', profErr.message);
         }
-      });
-      if (error) throw error;
+      }
+
       return res.status(201).json({
         success: true,
-        user: data.user,
-        session: data.session,
+        user: createdUser,
+        session: session,
         message: 'Account created successfully!'
       });
     } else {
@@ -210,9 +275,18 @@ app.post('/api/auth/login', async (req, res) => {
         password
       });
       if (error) throw error;
+
+      // Fetch student profile settings (budget limits, college, name)
+      let profile = null;
+      try {
+        const { data: p } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+        profile = p;
+      } catch (pe) {}
+
       return res.json({
         success: true,
         user: data.user,
+        profile,
         session: data.session,
         message: 'Logged in successfully!'
       });
@@ -256,7 +330,13 @@ app.post('/api/upi/parse-and-log', async (req, res) => {
     }
 
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.from('transactions').insert(parsedItems).select();
+      // In Supabase PostgreSQL, id is UUID DEFAULT uuid_generate_v4().
+      // Do not send string ids to Postgres!
+      const itemsToInsert = parsedItems.map(item => {
+        const { id, ...rest } = item;
+        return rest;
+      });
+      const { data, error } = await supabase.from('transactions').insert(itemsToInsert).select();
       if (error) throw error;
       return res.status(201).json({ success: true, count: data.length, data });
     } else {
@@ -442,22 +522,35 @@ app.get('/api/transactions', async (req, res) => {
 
 app.post('/api/transactions', async (req, res) => {
   try {
-    const tx = {
-      id: Date.now().toString(),
-      type: req.body.type || 'EXPENSE',
-      amount: parseFloat(req.body.amount),
-      title: req.body.title,
-      category: req.body.category || 'Other',
-      payment_app: req.body.payment_app || 'UPI',
-      transaction_date: req.body.transaction_date || new Date().toISOString().split('T')[0]
-    };
+    const isExpense = (req.body.type || 'EXPENSE').toUpperCase() === 'EXPENSE';
+    const cleanAmount = parseFloat(req.body.amount);
+    if (isNaN(cleanAmount) || cleanAmount <= 0) {
+      return res.status(400).json({ error: 'A valid amount is required' });
+    }
 
     if (isSupabaseConfigured && supabase) {
-      if (req.body.userId) tx.user_id = req.body.userId;
-      const { data, error } = await supabase.from('transactions').insert([tx]).select();
+      const dbTx = {
+        type: isExpense ? 'EXPENSE' : 'INCOME',
+        amount: cleanAmount,
+        title: req.body.title || (isExpense ? 'Expense' : 'Income'),
+        category: req.body.category || 'Other',
+        payment_app: req.body.payment_app || 'UPI',
+        transaction_date: req.body.transaction_date || new Date().toISOString().split('T')[0]
+      };
+      if (req.body.userId) dbTx.user_id = req.body.userId;
+      const { data, error } = await supabase.from('transactions').insert([dbTx]).select();
       if (error) throw error;
       return res.status(201).json({ success: true, data: data[0] });
     } else {
+      const tx = {
+        id: Date.now().toString(),
+        type: isExpense ? 'EXPENSE' : 'INCOME',
+        amount: cleanAmount,
+        title: req.body.title || (isExpense ? 'Expense' : 'Income'),
+        category: req.body.category || 'Other',
+        payment_app: req.body.payment_app || 'UPI',
+        transaction_date: req.body.transaction_date || new Date().toISOString().split('T')[0]
+      };
       memoryDb.transactions.unshift(tx);
       return res.status(201).json({ success: true, data: tx });
     }
@@ -564,20 +657,30 @@ app.get('/api/goals', async (req, res) => {
 
 app.post('/api/goals', async (req, res) => {
   try {
-    const goal = {
-      id: 'g_' + Date.now(),
-      title: req.body.title,
-      target_amount: parseFloat(req.body.target_amount),
-      current_saved: parseFloat(req.body.current_saved || 0),
-      deadline: req.body.deadline
-    };
+    const targetAmt = parseFloat(req.body.target_amount);
+    if (isNaN(targetAmt) || targetAmt <= 0) {
+      return res.status(400).json({ error: 'Valid target amount is required' });
+    }
 
     if (isSupabaseConfigured && supabase) {
-      if (req.body.userId) goal.user_id = req.body.userId;
-      const { data, error } = await supabase.from('savings_goals').insert([goal]).select();
+      const dbGoal = {
+        title: req.body.title || 'Savings Goal',
+        target_amount: targetAmt,
+        current_saved: parseFloat(req.body.current_saved || 0),
+        deadline: req.body.deadline || new Date(Date.now() + 90 * 86400000).toISOString().split('T')[0]
+      };
+      if (req.body.userId) dbGoal.user_id = req.body.userId;
+      const { data, error } = await supabase.from('savings_goals').insert([dbGoal]).select();
       if (error) throw error;
       return res.status(201).json({ success: true, data: data[0] });
     } else {
+      const goal = {
+        id: 'g_' + Date.now(),
+        title: req.body.title,
+        target_amount: targetAmt,
+        current_saved: parseFloat(req.body.current_saved || 0),
+        deadline: req.body.deadline
+      };
       memoryDb.goals.push(goal);
       return res.status(201).json({ success: true, data: goal });
     }
@@ -590,6 +693,9 @@ app.put('/api/goals/:id/deposit', async (req, res) => {
   try {
     const { id } = req.params;
     const amt = parseFloat(req.body.amount);
+    if (isNaN(amt) || amt <= 0) {
+      return res.status(400).json({ error: 'Valid deposit amount required' });
+    }
 
     if (isSupabaseConfigured && supabase) {
       const { data: g, error: ge } = await supabase.from('savings_goals').select('*').eq('id', id).single();
@@ -597,6 +703,22 @@ app.put('/api/goals/:id/deposit', async (req, res) => {
       const updated = Number(g.current_saved) + amt;
       const { data, error } = await supabase.from('savings_goals').update({ current_saved: updated }).eq('id', id).select();
       if (error) throw error;
+
+      // Also log deposit as transaction in Supabase
+      try {
+        await supabase.from('transactions').insert([{
+          user_id: g.user_id || req.body.userId || null,
+          type: 'EXPENSE',
+          amount: amt,
+          title: `Savings: ${g.title}`,
+          category: 'Savings Deposit',
+          payment_app: 'Goal Transfer',
+          transaction_date: new Date().toISOString().split('T')[0]
+        }]);
+      } catch (txErr) {
+        console.warn('Deposit tx log warning:', txErr.message);
+      }
+
       return res.json({ success: true, data: data[0] });
     } else {
       const goal = memoryDb.goals.find(g => g.id === id);
