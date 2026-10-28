@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
@@ -8,6 +9,19 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend files (index.html, database.html, api.js, icons, etc.)
+app.use(express.static(path.join(__dirname)));
+
+// Root route: serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Database route: serve database.html
+app.get('/database', (req, res) => {
+  res.sendFile(path.join(__dirname, 'database.html'));
+});
 
 // Initialize Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -19,13 +33,17 @@ const isSupabaseConfigured = supabaseUrl &&
 
 let supabase = null;
 if (isSupabaseConfigured) {
-  supabase = createClient(supabaseUrl, supabaseKey);
-  console.log('✅ Connected to Supabase Cloud Database');
+  try {
+    supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('✅ Connected to Supabase Cloud Database');
+  } catch (e) {
+    console.warn('⚠️ Supabase init warning:', e.message);
+  }
 } else {
-  console.log('ℹ️ Running with in-memory persistence (configure .env with Supabase credentials for cloud persistence)');
+  console.log('ℹ️ Running with fallback persistence (configure .env with Supabase credentials)');
 }
 
-// In-memory fallback data store for offline / instant testing
+// In-memory fallback data store for instant testing
 let memoryDb = {
   transactions: [
     { id: '1', type: 'INCOME', amount: 8000, title: 'Monthly Pocket Money from Parents', category: 'Pocket Money', payment_app: 'Bank Transfer', transaction_date: new Date(Date.now() - 172800000).toISOString().split('T')[0] },
@@ -145,7 +163,7 @@ app.post('/api/upi/parse-and-log', async (req, res) => {
       return res.status(422).json({ error: 'Could not extract valid amount from input text.' });
     }
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.from('transactions').insert(parsedItems).select();
       if (error) throw error;
       return res.status(201).json({ success: true, count: data.length, data });
@@ -163,7 +181,7 @@ app.get('/api/transactions', async (req, res) => {
   try {
     const { category, userId } = req.query;
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       let q = supabase.from('transactions').select('*').order('transaction_date', { ascending: false });
       if (userId) q = q.eq('user_id', userId);
       if (category && category !== 'ALL') q = q.eq('category', category);
@@ -194,7 +212,7 @@ app.post('/api/transactions', async (req, res) => {
       transaction_date: req.body.transaction_date || new Date().toISOString().split('T')[0]
     };
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       if (req.body.userId) tx.user_id = req.body.userId;
       const { data, error } = await supabase.from('transactions').insert([tx]).select();
       if (error) throw error;
@@ -211,7 +229,7 @@ app.post('/api/transactions', async (req, res) => {
 app.delete('/api/transactions/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       const { error } = await supabase.from('transactions').delete().eq('id', id);
       if (error) throw error;
     } else {
@@ -227,7 +245,7 @@ app.delete('/api/transactions/:id', async (req, res) => {
 app.get('/api/dashboard/analytics', async (req, res) => {
   try {
     let txList = [];
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.from('transactions').select('*');
       if (error) throw error;
       txList = data || [];
@@ -286,7 +304,7 @@ app.get('/api/dashboard/analytics', async (req, res) => {
 // 5. Savings Goals
 app.get('/api/goals', async (req, res) => {
   try {
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.from('savings_goals').select('*').order('created_at', { ascending: true });
       if (error) throw error;
       return res.json({ success: true, data });
@@ -308,7 +326,7 @@ app.post('/api/goals', async (req, res) => {
       deadline: req.body.deadline
     };
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       if (req.body.userId) goal.user_id = req.body.userId;
       const { data, error } = await supabase.from('savings_goals').insert([goal]).select();
       if (error) throw error;
@@ -327,7 +345,7 @@ app.put('/api/goals/:id/deposit', async (req, res) => {
     const { id } = req.params;
     const amt = parseFloat(req.body.amount);
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && supabase) {
       const { data: g, error: ge } = await supabase.from('savings_goals').select('*').eq('id', id).single();
       if (ge) throw ge;
       const updated = Number(g.current_saved) + amt;
@@ -338,7 +356,6 @@ app.put('/api/goals/:id/deposit', async (req, res) => {
       const goal = memoryDb.goals.find(g => g.id === id);
       if (!goal) return res.status(404).json({ error: 'Goal not found' });
       goal.current_saved += amt;
-      // Record transaction
       memoryDb.transactions.unshift({
         id: Date.now().toString(),
         type: 'EXPENSE',
@@ -355,7 +372,12 @@ app.put('/api/goals/:id/deposit', async (req, res) => {
   }
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`🚀 CampusSpend Backend listening on http://localhost:${PORT}`);
-});
+// Export app for Vercel Serverless Function
+module.exports = app;
+
+// Listen locally if not in Vercel serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 CampusSpend Backend listening on http://localhost:${PORT}`);
+  });
+}

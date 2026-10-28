@@ -1,5 +1,9 @@
 // api.js - Frontend to Backend REST API Bridge
-const API_BASE_URL = 'http://localhost:5000/api';
+// Automatically detects whether running locally (port 5000) or deployed on Vercel
+const isLocal = typeof window !== 'undefined' && 
+                (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const API_BASE_URL = isLocal ? 'http://localhost:5000/api' : '/api';
 
 export const Api = {
   // Check if backend server is online
